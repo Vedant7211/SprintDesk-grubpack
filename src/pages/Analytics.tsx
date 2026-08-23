@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import {
   BarChart, Bar,
   PieChart, Pie, Cell,
-  LineChart, Line,
   AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer,
@@ -146,7 +145,7 @@ export const Analytics: React.FC = () => {
                 outerRadius={110}
                 paddingAngle={3}
                 dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 labelLine={false}
               >
                 {statusData.map((entry) => (
