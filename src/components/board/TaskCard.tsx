@@ -29,7 +29,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
       ref={setNodeRef}
       style={style}
       className={`bg-white p-4 rounded-md shadow-sm border border-gray-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${isDragging ? 'shadow-lg border-blue-500 ring-2 ring-blue-500' : ''}`}
-      onClick={(e) => {
+      onClick={() => {
         if (isDragging) return;
         onClick();
       }}
