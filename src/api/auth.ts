@@ -27,6 +27,12 @@ export interface LoginResponse {
 
    return response.data;
  };
+
+export const getAuthUser = async (accessToken?: string): Promise<LoginResponse> => {
+  const config = accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {};
+  const response = await api.get<LoginResponse>("/auth/me", config);
+  return response.data;
+};
 export const login = async ({ username, password }: LoginParams) => {
   const response = await api.post<LoginResponse>("/auth/login", {
     username,
