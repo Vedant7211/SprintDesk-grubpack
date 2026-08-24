@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { login, refreshAccessToken } from "../api/auth";
+import { login } from "../api/auth";
 import { useAuthStore } from "../stores/auth.store";
 import { useNavigate } from "react-router-dom";
 import { Activity, Loader2 } from "lucide-react";
@@ -7,7 +7,6 @@ import { Activity, Loader2 } from "lucide-react";
 const Login = () => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const refreshToken = useAuthStore((state) => state.refreshToken);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   const [username, setUsername] = useState("");
