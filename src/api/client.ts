@@ -32,6 +32,16 @@ api.interceptors.response.use(
 
     const originalRequest = error.config as RetryableRequestConfig;
 
+    if (
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/refresh")
+    ) {
+      if (originalRequest.url?.includes("/auth/refresh")) {
+        useAuthStore.getState().logout();
+      }
+      return Promise.reject(error);
+    }
+
     if (originalRequest._retry) {
       useAuthStore.getState().logout();
 
@@ -40,7 +50,7 @@ api.interceptors.response.use(
 
     originalRequest._retry = true;
 
-    const refreshToken = useAuthStore.getState().refreshToken;
+    const refreshToken = useAuthStore.getState().refreshToken || localStorage.getItem("refreshToken");
 
     if (!refreshToken) {
       useAuthStore.getState().logout();
@@ -51,7 +61,7 @@ api.interceptors.response.use(
     try {
       const response = await refreshAccessToken(refreshToken);
 
-      useAuthStore.getState().setAuth(response);
+      useAuthStore.getState().updateTokens(response.accessToken, response.refreshToken);
 
       originalRequest.headers.Authorization = `Bearer ${response.accessToken}`;
 

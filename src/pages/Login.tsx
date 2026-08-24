@@ -8,6 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
   const refreshToken = useAuthStore((state) => state.refreshToken);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -15,17 +16,10 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const refreshSession = async () => {
-      if (refreshToken) {
-        try {
-          await refreshAccessToken(refreshToken);
-        } catch {
-          // Silent catch
-        }
-      }
-    };
-    refreshSession();
-  }, [refreshToken]);
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

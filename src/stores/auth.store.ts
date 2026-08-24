@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { LoginResponse } from "../api/auth";
-import { refreshAccessToken } from "../api/auth";
+import { refreshAccessToken, getAuthUser } from "../api/auth";
 
 type AuthState = {
   accessToken: string | null;
@@ -10,6 +10,7 @@ type AuthState = {
   isInitializing: boolean;
   initializeAuth: () => Promise<void>;
   setAuth: (data: LoginResponse) => void;
+  updateTokens: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
 };
 
@@ -30,10 +31,13 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     try {
       const data = await refreshAccessToken(refreshToken);
+      // Fetch full user object using the new access token
+      const userDetails = await getAuthUser(data.accessToken);
+
       set({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
-        user: data,
+        user: { ...data, ...userDetails },
         isAuthenticated: true,
         isInitializing: false,
       });
@@ -58,6 +62,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       user: data,
       isAuthenticated: true,
     });
+  },
+  updateTokens: (accessToken: string, refreshToken: string) => {
+    localStorage.setItem("refreshToken", refreshToken);
+    set((state) => ({
+      accessToken,
+      refreshToken,
+      user: state.user ? { ...state.user, accessToken, refreshToken } : null,
+    }));
   },
   logout: () => {
     localStorage.removeItem("refreshToken");
